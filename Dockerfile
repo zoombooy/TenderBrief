@@ -31,5 +31,7 @@ RUN if ! id app >/dev/null 2>&1; then useradd --create-home --uid 10001 app; fi 
 
 USER app
 EXPOSE 4173
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4173/api/health', timeout=3).read()"]
 ENTRYPOINT ["node"]
 CMD ["server.mjs"]
