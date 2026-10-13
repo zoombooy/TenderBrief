@@ -31,4 +31,5 @@ RUN if ! id app >/dev/null 2>&1; then useradd --create-home --uid 10001 app; fi 
 
 USER app
 EXPOSE 4173
-CMD ["node", "server.mjs"]
+ENTRYPOINT ["node"]
+CMD ["server.mjs"]
