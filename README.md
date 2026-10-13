@@ -25,6 +25,18 @@ python -m pip install -r requirements.txt
 
 打开 `http://127.0.0.1:4173/`。可在模型设置页填写兼容端点、模型名称和 API Key；密钥仅存于服务进程内存，服务重启后需重新填写。生产或跨机器访问时，应使用 HTTPS 反向代理并通过环境变量注入长期配置。
 
+## Docker 部署
+
+```bash
+docker build -t tenderbrief:latest .
+docker run -d --name tenderbrief --restart unless-stopped \
+  -p <服务器内网IP>:4173:4173 \
+  -v /opt/tenderbrief/work:/app/work \
+  tenderbrief:latest
+```
+
+浏览器访问 `http://<服务器内网IP>:4173/`。API 端口只在容器内部监听，解析工作目录挂载到 `/opt/tenderbrief/work`。更新代码后重新构建镜像并重建 `tenderbrief` 容器；这不会操作其它项目容器。
+
 也可直接启动 Python API：
 
 ```powershell

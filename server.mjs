@@ -83,10 +83,18 @@ function requireFile(filename) {
 }
 import { readFileSync } from "node:fs";
 
-server.listen(uiPort, "127.0.0.1", () => {
-  console.log("TenderBrief: http://127.0.0.1:" + uiPort);
+const uiHost = process.env.UI_HOST || "127.0.0.1";
+server.listen(uiPort, uiHost, () => {
+  console.log("TenderBrief UI listening on " + uiHost + ":" + uiPort);
 });
-process.on("SIGINT", () => {
+function shutdown() {
   api.kill("SIGTERM");
-  server.close(() => process.exit(0));
-});
+  const timeout = setTimeout(() => process.exit(1), 5000);
+  timeout.unref();
+  server.close(() => {
+    clearTimeout(timeout);
+    process.exit(0);
+  });
+}
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
