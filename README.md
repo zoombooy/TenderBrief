@@ -37,6 +37,17 @@ docker run -d --name tenderbrief --restart unless-stopped \
 
 浏览器访问 `http://<服务器内网IP>:4173/`。API 端口只在容器内部监听，解析工作目录挂载到 `/opt/tenderbrief/work`。更新代码后重新构建镜像并重建 `tenderbrief` 容器；这不会操作其它项目容器。
 
+目标服务器无法访问 Python 包源、但已有完整 Python 运行镜像时，可复用其解释器和已安装依赖构建独立的 TenderBrief 容器：
+
+```bash
+docker build -t tenderbrief:latest \
+  --build-arg PYTHON_BASE=<已有Python镜像> \
+  --build-arg INSTALL_REQUIREMENTS=0 \
+  --build-arg PYTHON_COMMAND=/usr/local/bin/python3.13 .
+```
+
+确认该镜像已安装 `requirements.txt` 中的运行依赖，并把宿主机工作目录授权给镜像内 `app` 用户后再启动。
+
 也可直接启动 Python API：
 
 ```powershell
